@@ -1,0 +1,136 @@
+#found this while cleaning out my google drive -- a hangman game I coded for fun and practice, in python.
+
+import getpass
+
+def game_play(chosen_word):
+  number_of_lives = 7
+  guessed_letters = []
+  letter_blanks = ["__" for i in range(len(chosen_word))]
+  print(gallows_visuals(number_of_lives, chosen_word))
+
+  while number_of_lives > 0:
+    guessed = input("Guessing player, what letter would you like to guess?  ")
+    print('\n'*20)
+
+    if len(guessed) > 1:
+      number_of_lives -= 1
+      print(gallows_visuals(number_of_lives, chosen_word))
+      print(guessed, "is not a letter.")
+
+    if guessed in guessed_letters:
+      print("You have already used that letter!")  
+
+    if guessed not in guessed_letters and guessed in chosen_word:
+      guessed_letters.append(guessed)
+      print(gallows_visuals(number_of_lives, chosen_word))
+      print("")
+      print("")
+      print("".join(letter_blanks))
+      print("Yes!", guessed, "is in the word!!")
+      print(updated_status(chosen_word, guessed, letter_blanks))
+
+    if guessed not in guessed_letters and guessed not in chosen_word:
+      guessed_letters.append(guessed)
+      number_of_lives -= 1
+      print(gallows_visuals(number_of_lives, chosen_word))  
+      print(updated_status(chosen_word, guessed, letter_blanks))
+
+
+def updated_status(chosen_word, guessed, letter_blanks):
+  for x in range (len(chosen_word)):
+    if guessed == chosen_word[x]:
+      letter_blanks[x] = guessed 
+      updated_check = (" ".join(letter_blanks))
+      winner_check(updated_check, chosen_word)
+  return updated_check      
+
+def winner_check(updated_check, chosen_word):
+ if updated_check == chosen_word:
+      return ("You win!!") 
+
+def gallows_visuals(number_of_lives, chosen_word):
+  if number_of_lives == 7:
+    return"""so far so good"""
+    
+  elif number_of_lives == 6:
+    return"""_______
+		|     |
+		|     
+		|
+		|
+		|
+		|
+		|________
+		|        |"""
+
+  elif number_of_lives == 5:
+    return"""_______
+		|     |
+		|     O
+		|
+		|
+		|
+		|
+		|________
+		|        |"""
+  elif number_of_lives == 4:
+    return"""_______
+		|     |
+		|     O
+		|   --|
+		|
+		|
+		|
+		|________
+		|        |"""
+  elif number_of_lives == 3:
+    return"""(_______
+		|     |
+		|     O
+		|   --|--
+		|
+		|
+		|
+		|________
+		|        |"""
+  elif number_of_lives == 2:
+    return """_______
+		|     |
+		|     O
+		|   --|--
+		|     |
+		|    |
+		|
+		|________
+		|        |"""
+  elif number_of_lives == 1:
+    return """_______
+		|     |
+		|     O
+		|   --|--
+		|     |
+		|    | |
+		|
+		|________
+		|        |"""
+  elif number_of_lives == 0:
+    return """_______
+		|     |
+		|     O
+		|   --|--
+		|     |
+		|    | |
+		|
+		|________
+		|        |
+    YOU LOSE!
+    The word was, chosen_word."""
+
+
+def game_start():
+  print("It's time to play Hangman!")
+  chosen_word = getpass.getpass("What word would you like the other player to guess?  ").lower()
+  print('\n'*20)
+  game_play(chosen_word)
+
+game_start()
