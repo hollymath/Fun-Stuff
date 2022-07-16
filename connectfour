@@ -1,0 +1,99 @@
+#this is a connect four game in Python that I coded after seeing it described somewhere as a good beginner exercise. Found it while
+#going through my Google Drive and doing a bit of organizing.
+
+
+cols = 7
+rows = 6
+board = [[] for i in range(0, cols)]
+turn = 0
+
+xs = ['x', 'x', 'x', 'x']
+os = ['o', 'o', 'o', 'o']
+
+def piece (row, col):
+    if len(board[col]) > row:
+        return board[col][row]
+    else:
+        return '*'
+
+def display ():
+    for r in range(0, rows):
+        for c in range(0, cols):
+            p = piece(rows-r-1,c)
+            print(p, end='')
+        print('')
+
+def play (col):
+    global turn
+    if turn % 2 == 0:
+        board[col].append('x')
+    else:
+        board[col].append('o')
+    turn = turn + 1
+
+def list_factory(data):
+  return [data[i:i+4] for i in range(len(data) - 3)]
+
+def transposer(LOL):
+  transposed_board = []
+  for x in range (1, 7):
+    transposed_board.append([])
+  for element in transposed_board:
+    for y in range (1, 8):
+      element.append(' ')
+  for x in range (0, len(LOL)):
+    for y in range (0, len(LOL[x])):
+      transposed_board[y][x] = LOL[x][y]  
+  return transposed_board
+
+def diagon_alley(grid):
+  coords = [[0, 3, 4], [0, 2, 5], [0, 1, 6], [0, 0, 6], [1, 0, 5], [2, 0, 4]]
+  diags = []
+  coords_2 = [[0, 3, 4], [0, 5, 6], [0, 4, 5], [1, 6, 5], [0, 6, 6], [2, 6, 4]]
+  for c in coords:
+    list_slice = []
+    x=c[0]
+    y=c[1]
+    size=c[2]
+    for i in range(0, size):
+      list_slice.append(grid[x+i][y+i])
+      diags.append(list_slice)
+  for c in coords_2:
+    list_slice = []
+    x=c[0]
+    y=c[1]
+    size=c[2]
+    for i in range(0, size):
+      list_slice.append(grid[x+i][y-i])
+      diags.append(list_slice)
+  return diags
+
+def winner():
+  for col in board:
+    check = list_factory(col)
+    if xs in check or os in check:
+      print("Winner")
+      return True
+  for row in transposer(board):  
+    row_check = list_factory(row)
+    if xs in row_check or os in row_check:
+      print("Winner")
+      return True  
+  for diag in diagon_alley(transposer(board)):
+     diag_check = list_factory(diag)
+     if xs in diag_check or os in diag_check:
+      print("Winner")
+      return True 
+  return False
+
+def tie():
+  for col in board:
+    if len(col)<rows:
+      return False
+  return True
+
+display()
+while not(winner()) and not(tie()) and turn < 43:
+      move = input('play which column (0-6)')
+      play(int(move))
+      display()
